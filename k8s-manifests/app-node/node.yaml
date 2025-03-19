@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: app-node
+  name: app-node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-node
+  template:
+    metadata:
+      labels:
+        app: app-node
+    spec:
+      containers:
+      - image: 547886934166.dkr.ecr.us-east-1.amazonaws.com/app-node
+        name: app-node
+        ports:
+          - containerPort: 3000
+            name: http
+            protocol: TCP
