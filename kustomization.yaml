@@ -1,0 +1,23 @@
+# Manifests management with kustomize
+
+resources:
+  - k8s-manifests/app-node/node.yaml
+  - k8s-manifests/app-node/service.yaml
+  - k8s-manifests/app-python/python.yaml
+  - k8s-manifests/app-python/service.yaml
+  - k8s-manifests/nginx/deployment.yaml
+  - k8s-manifests/nginx/service.yaml
+
+configMapGenerator:
+  - name: nginx-config
+    files:
+      - k8s-manifests/nginx/nginx.conf
+
+images:
+- name: 547886934166.dkr.ecr.us-east-1.amazonaws.com/app-node
+  newName: 547886934166.dkr.ecr.us-east-1.amazonaws.com/app-node
+  newTag: v1.0
+
+- name: 547886934166.dkr.ecr.us-east-1.amazonaws.com/app-python
+  newName: 547886934166.dkr.ecr.us-east-1.amazonaws.com/app-python
+  newTag: v1.0
