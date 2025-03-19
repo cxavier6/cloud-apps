@@ -9,6 +9,7 @@ terraform.tfstate.backup
 .terraform.lock.hcl
 tfplan
 *.tfplan
+tmp/
 
 # Output files
 *.tfvars
