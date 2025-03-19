@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  node-app:
+    build:
+      context: ./node-app
+    container_name: node-app1
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    networks:
+      - app-network
+    environment:
+      - REDIS_HOST=redis 
+
+  python-app:
+    build:
+      context: ./python-app
+    container_name: python-app2
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    networks:
+      - app-network
+    environment:
+      - REDIS_HOST=redis 
+
+networks:
+  app-network:
+    driver: bridge
