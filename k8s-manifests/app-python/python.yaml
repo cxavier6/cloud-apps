@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: app-python
+  name: app-python
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-python
+  template:
+    metadata:
+      labels:
+        app: app-python
+    spec:
+      containers:
+      - image: 547886934166.dkr.ecr.us-east-1.amazonaws.com/app-python
+        name: app-python
+        ports:
+          - containerPort: 8000
+            name: http
+            protocol: TCP
