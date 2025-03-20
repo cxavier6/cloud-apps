@@ -22,3 +22,12 @@ module "ecr" {
 
   tags = var.tags
 }
+
+module "eks_addons" {
+  source = "./modules/eks-addons"
+
+  vpc_id      = module.vpc.vpc_id
+  cluster_name = module.eks.cluster_name
+
+  depends_on = [module.eks]
+}
