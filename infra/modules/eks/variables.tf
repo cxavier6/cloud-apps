@@ -3,6 +3,7 @@ variable "eks_cluster" {
     cluster_name                        = optional(string, "cloud-apps")
     enabled_cluster_log_types           = optional(list(string), ["api", "audit", "authenticator", "controllerManager", "scheduler"])
     access_config_authentication_mode   = optional(string, "API_AND_CONFIG_MAP")
+    ebs_csi_role                        = optional(string, "AmazonEKS_EBS_CSI_DriverRole")
     node_group = optional(object({
       name              = optional(string, "cloud-apps-ng")
       role_name         = optional(string, "cloud-apps-ng-role")

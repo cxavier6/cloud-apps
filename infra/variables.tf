@@ -6,4 +6,3 @@ variable "tags" {
     Environment = "Development"
   }
 }
-
