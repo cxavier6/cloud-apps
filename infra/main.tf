@@ -30,4 +30,12 @@ module "eks_addons" {
   cluster_name = module.eks.cluster_name
 
   depends_on = [module.eks]
+
+  tags = var.tags
+}
+
+module "acm" {
+  source = "./modules/acm"
+
+  tags = var.tags
 }
