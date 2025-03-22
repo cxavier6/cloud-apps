@@ -1,4 +1,6 @@
 resource "helm_release" "redis" {
+  depends_on = [ kubernetes_storage_class_v1.ebs ]
+
   name       = "redis"
   namespace  = "redis"
   chart      = "redis"
@@ -12,9 +14,7 @@ auth:
   enabled: false
 architecture: standalone
 persistence:
-  enabled: true
-  storageClass: "gp2"  
-  size: 8Gi            
+  enabled: true          
 EOF
   ]
 }
