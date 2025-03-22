@@ -49,7 +49,7 @@ jobs:
     - name: Checkout and Commit to GitOps
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-    - run: |
+      run: |
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
         kustomize edit set image $REGISTRY/$NODE_REPOSITORY=$REGISTRY/$NODE_REPOSITORY:$IMAGE_TAG
