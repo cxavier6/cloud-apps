@@ -1,12 +1,13 @@
 # Manifests management with kustomize
 
 resources:
-  - k8s-manifests/app-node/node.yaml
+  - k8s-manifests/app-node/deployment.yaml
   - k8s-manifests/app-node/service.yaml
-  - k8s-manifests/app-python/python.yaml
+  - k8s-manifests/app-python/deployment.yaml
   - k8s-manifests/app-python/service.yaml
   - k8s-manifests/nginx/deployment.yaml
   - k8s-manifests/nginx/service.yaml
+  - k8s-manifests/ingress/app-ingress.yaml
 
 configMapGenerator:
   - name: nginx-config

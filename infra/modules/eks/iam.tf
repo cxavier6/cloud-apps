@@ -66,6 +66,7 @@ resource "aws_iam_role_policy_attachment" "eks_node_group-AmazonEC2ContainerRegi
   role       = aws_iam_role.eks_node_group_role.name
 }
 
+
 # OIDC Provider
 data "tls_certificate" "oidc" {
   url = aws_eks_cluster.this.identity[0].oidc[0].issuer
@@ -76,6 +77,45 @@ resource "aws_iam_openid_connect_provider" "eks_oidc" {
   thumbprint_list = [data.tls_certificate.oidc.certificates[0].sha1_fingerprint]
   url             = aws_eks_cluster.this.identity[0].oidc[0].issuer
 }
+
+# IAM Role for AWS Load Balancer Controller
+data "http" "aws_lb_controller_policy" {
+  url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.11.0/docs/install/iam_policy.json"
+}
+
+resource "aws_iam_policy" "aws_lb_controller_policy" {
+  name        = "AWSLoadBalancerControllerIAMPolicy"
+  description = "IAM Policy for AWS Load Balancer Controller"
+  policy      = data.http.aws_lb_controller_policy.body
+}
+
+resource "aws_iam_role" "aws_lb_controller_role" {
+  name = "AWSLoadBalancerControllerRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Effect = "Allow"
+        Principal = {
+          Federated = aws_iam_openid_connect_provider.eks_oidc.arn
+        }
+        Condition = {
+          StringEquals = {
+            "${replace(aws_iam_openid_connect_provider.eks_oidc.url, "https://", "")}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller"
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "aws_lb_controller_policy_attachment" {
+  role       = aws_iam_role.eks_node_group_role.name
+  policy_arn = aws_iam_policy.aws_lb_controller_policy.arn
+}
+
 
 # IAM Role for EBS CSI Driver
 resource "aws_iam_role" "ebs_csi_role" {
@@ -100,7 +140,6 @@ resource "aws_iam_role" "ebs_csi_role" {
   })
 }
 
-# Policy attachment for EBS CSI Driver
 resource "aws_iam_policy_attachment" "ebs_csi_policy" {
   name       = "AmazonEKS_EBS_CSI_PolicyAttachment"
   roles      = [aws_iam_role.ebs_csi_role.name]

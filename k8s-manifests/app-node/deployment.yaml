@@ -17,7 +17,17 @@ spec:
       containers:
       - image: 547886934166.dkr.ecr.us-east-1.amazonaws.com/app-node
         name: app-node
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
         ports:
           - containerPort: 3000
             name: http
             protocol: TCP
+        env:
+          - name: REDIS_HOST
+            value: "redis-master.redis.svc.cluster.local"

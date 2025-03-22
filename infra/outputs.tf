@@ -34,3 +34,8 @@ output "cluster_certificate_authority_data" {
   value       = module.eks.cluster_certificate_authority_data
   sensitive   = true
 }
+
+output "certificate_arn" {
+  description = "The ARN of the ACM certificate"
+  value       = module.acm.certificate_arn
+}
