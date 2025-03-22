@@ -1,12 +1,12 @@
 resource "aws_acm_certificate" "this" {
-  domain_name       = "camila-devops.site"
-  subject_alternative_names = [ "*.camila-devops.site" ]
+  domain_name       = var.acm.domain_name
+  subject_alternative_names = ["*.${var.acm.domain_name}"]
   validation_method = "DNS"
 
     tags = merge(
         var.tags,
         {
-            Name = aws_acm_certificate.this.domain_name
+            Name = var.acm.domain_name
         }
     )
 
