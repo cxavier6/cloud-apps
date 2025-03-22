@@ -30,7 +30,7 @@ app.get('/text', (req, res) => {
 
     if (data) {
       console.log('Cache found for /text:', data);
-      res.send(data);
+      res.send(`${data} (CACHED)`);
     } else {
       const text = 'Hello world';
       console.log('No cache for /text. Sending fresh response:', text);
@@ -54,7 +54,7 @@ app.get('/time', (req, res) => {
 
     if (data) {
       console.log('Cache found for /time:', data);
-      res.send(data);
+      res.send(`${data} (CACHED)`);
     } else {
       const time = new Date().toISOString();
       console.log('No cache for /time. Sending fresh response:', time);
