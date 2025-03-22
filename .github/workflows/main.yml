@@ -56,6 +56,46 @@ jobs:
         git commit -m "[Github Action] Updated Node App Image to $IMAGE_TAG"
         git push
 
+  pythonApp:
+    name: PythonApp Deployment
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Configure AWS Access Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{vars.AWS_REGION}}
+        role-to-assume: ${{vars.AWS_GITHUB_ROLE}}
+        
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push docker image to Amazon ECR
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: |
+        docker build -f ./apps/python-app/Dockerfile -t $REGISTRY/$PYTHON_REPOSITORY:$IMAGE_TAG ./apps/python-app
+        docker push $REGISTRY/$PYTHON_REPOSITORY:$IMAGE_TAG
+        
+    - uses: actions/checkout@v4
+      with:
+        repository: 'cxavier6/cloud-apps'
+        token: ${{ secrets.TOKEN }}
+
+    - name: Checkout and Commit to GitOps
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        kustomize edit set image $REGISTRY/$PYTHON_REPOSITORY=$REGISTRY/$PYTHON_REPOSITORY:$IMAGE_TAG
+        git add ./kustomization.yaml
+        git commit -m "[Github Action] Updated Python App Image to $IMAGE_TAG"
+        git push
+
 
 
 
