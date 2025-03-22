@@ -8,6 +8,14 @@ variable "aws_lb_controller" {
     }
 }
 
+variable "argocd" {
+  type = object({
+    host = optional(string, "argocd.camila-devops.site") 
+  })
+
+  default = {}
+}
+
 variable "vpc_id" {
   description = "The VPC ID where the EKS cluster will be deployed"
   type        = string

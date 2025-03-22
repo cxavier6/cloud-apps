@@ -8,6 +8,8 @@ resources:
   - k8s-manifests/nginx/deployment.yaml
   - k8s-manifests/nginx/service.yaml
   - k8s-manifests/ingress/app-ingress.yaml
+  - k8s-manifests/argocd/application.yaml
+  - k8s-manifests/ingress/argocd-ingress.yaml
 
 configMapGenerator:
   - name: nginx-config

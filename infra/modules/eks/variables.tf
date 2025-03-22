@@ -49,6 +49,11 @@ variable "subnet_ids" {
   type        = list(string)
 }
 
+variable "ecr_arns" {
+  description = "List of ECR repository ARNs"
+  type        = list(string)
+}
+
 variable "tags" {
   description = "Default tags for resources"
   type        = map(string)
