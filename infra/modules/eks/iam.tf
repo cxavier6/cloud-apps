@@ -1,5 +1,4 @@
 # Create IAM Role for EKS Cluster and node group
-
 resource "aws_iam_role" "eks_cluster_role" {
   name = var.iam.eks_cluster_role_name
   assume_role_policy = jsonencode({
@@ -67,7 +66,7 @@ resource "aws_iam_role_policy_attachment" "eks_node_group-AmazonEC2ContainerRegi
 }
 
 
-# OIDC Provider
+# OIDC Provider EKS
 data "tls_certificate" "oidc" {
   url = aws_eks_cluster.this.identity[0].oidc[0].issuer
 }
@@ -174,3 +173,122 @@ resource "aws_iam_role_policy_attachment" "vpc_cni_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
   role       = aws_iam_role.vpc_cni_role.name
 }
+
+# IAM Role for ArgoCD
+resource "aws_iam_role" "argocd_role" {
+  name = "argocd-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Effect = "Allow"
+        Principal = {
+          Federated = aws_iam_openid_connect_provider.eks_oidc.arn
+        }
+        Condition = {
+          StringEquals = {
+            "${replace(aws_iam_openid_connect_provider.eks_oidc.url, "https://", "")}:sub" = "system:serviceaccount:argocd:argocd-server"
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "argocd_policy" {
+  name        = "ArgocdEKSAccessPolicy"
+  description = "Política para o ArgoCD acessar o EKS"
+  policy      = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "eks:DescribeCluster",
+          "eks:ListClusters"
+        ]
+        Effect = "Allow"
+        Resource = "*"
+      },
+      {
+        Action = [
+          "eks:UpdateClusterConfig",
+          "eks:UpdateClusterVersion",
+          "eks:ListUpdates"
+        ]
+        Effect = "Allow"
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "argocd_policy_attachment" {
+  role       = aws_iam_role.argocd_role.name
+  policy_arn = aws_iam_policy.argocd_policy.arn
+}
+
+# OIDC Provider Github 
+resource "aws_iam_openid_connect_provider" "github" {
+  client_id_list  = ["sts.amazonaws.com"]
+  # thumbprint_list = [data.tls_certificate.oidc.certificates[0].sha1_fingerprint]
+  url             = "https://token.actions.githubusercontent.com"
+}
+
+resource "aws_iam_role" "github" {
+  name = "GithubActionsRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Effect = "Allow"
+        Principal = {
+          Federated = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"
+        }
+        Condition = {
+          StringLike = {
+            "token.actions.githubusercontent.com:sub": "repo:cxavier6/cloud-apps:*"
+          },
+          StringEquals: {
+              "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "github_actions_policy" {
+  name        = "GithubActionEKSAccessPolicy"
+  role       = aws_iam_role.github.name
+
+  policy      = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ecr:GetAuthorizationToken"
+        ]
+        Effect = "Allow"
+        Resource = "*"
+      },
+      {
+        Action = [
+          "ecr:BatchGetImage",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:CompleteLayerUpload",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:InitiateLayerUpload",
+          "ecr:PutImage",
+          "ecr:UploadLayerPart"
+        ]
+        Effect = "Allow"
+        Resource = "${var.ecr_arns}"
+      }
+    ]
+  })
+}
+
