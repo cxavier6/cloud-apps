@@ -26,7 +26,6 @@ jobs:
     - name: Configure AWS Access Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        audience: sts.amazonaws.com.cn
         aws-region: ${{vars.AWS_REGION}}
         role-to-assume: ${{vars.AWS_GITHUB_ROLE}}
         
