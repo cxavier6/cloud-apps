@@ -7,6 +7,7 @@ resources:
   - k8s-manifests/app-python/service.yaml
   - k8s-manifests/nginx/deployment.yaml
   - k8s-manifests/nginx/service.yaml
+  - k8s-manifests/ingress/app-ingress.yaml
 
 configMapGenerator:
   - name: nginx-config
