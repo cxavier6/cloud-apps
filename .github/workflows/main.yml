@@ -1,0 +1,66 @@
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - master
+    paths:
+    - 'apps/**'
+    
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  NODE_REPOSITORY: app-node
+  PYTHON_REPOSITORY: app-python
+  IMAGE_TAG: ${{ github.sha }} 
+  
+jobs:
+  nodeApp:
+    name: NodeApp Deployment
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Configure AWS Access Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        audience: sts.amazonaws.com.cn
+        aws-region: ${{vars.AWS_REGION}}
+        role-to-assume: ${{vars.AWS_GITHUB_ROLE}}
+        
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push docker image to Amazon ECR
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: |
+        docker build -f ./apps/node-app/Dockerfile -t $REGISTRY/$NODE_REPOSITORY:$IMAGE_TAG ./apps/node-app
+        docker push $REGISTRY/$NODE_REPOSITORY:$IMAGE_TAG
+        
+    - uses: actions/checkout@v4
+      with:
+        repository: 'cxavier6/cloud-apps'
+        token: ${{ secrets.TOKEN }}
+
+    - name: Checkout and Commit to GitOps
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    - run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        kustomize edit set image $REGISTRY/$NODE_REPOSITORY=$REGISTRY/$NODE_REPOSITORY:$IMAGE_TAG
+        git add ./kustomization.yaml
+        git commit -m "[Github Action] Updated Node App Image to $IMAGE_TAG"
+        git push
+
+
+
+
+
+
+
+      
