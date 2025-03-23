@@ -5,7 +5,7 @@ metadata:
     alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
     alb.ingress.kubernetes.io/backend-protocol: HTTP
     alb.ingress.kubernetes.io/healthcheck-path: /health
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:547886934166:certificate/b177e7f1-52a6-49bd-847e-0b7107b905d9
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:547886934166:certificate/4796129c-12c0-42bf-9a2b-2cdc57a51d33
     alb.ingress.kubernetes.io/group.name: applications-alb
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/load-balancer-name: applications-alb
