@@ -12,11 +12,12 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
     alb.ingress.kubernetes.io/target-type: ip
-  name: nginx-proxy
+  name: grafana
+  namespace: monitoring
 spec:
   ingressClassName: alb
   rules:
-  - host: node.camila-devops.site
+  - host: grafana.camila-devops.site
     http:
       paths:
       - backend:
@@ -28,25 +29,8 @@ spec:
         pathType: Prefix
       - backend:
           service:
-            name: nginx-proxy
+            name: prometheus-grafana
             port:
-              name: http
-        path: /
-        pathType: Prefix
-  - host: python.camila-devops.site
-    http:
-      paths:
-      - backend:
-          service:
-            name: ssl-redirect
-            port:
-              name: use-annotation
-        path: /
-        pathType: Prefix
-      - backend:
-          service:
-            name: nginx-proxy
-            port:
-              name: http
+              number: 80
         path: /
         pathType: Prefix

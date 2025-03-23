@@ -3,25 +3,25 @@ resource "helm_release" "argocd" {
   namespace  = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
-  version    = "7.0.0"
+  version    = "7.8.13"
 
   create_namespace = true  
 
   values = [<<EOF
   controller:
     replicas: 1
-    serviceAccount:
-      create: true
-      name: argocd-server  
-      annotations:
-        eks.amazonaws.com/role-arn: arn:aws:iam::547886934166:role/argocd-role
-        update-timestamp: "${timestamp()}"
+
   configs:
     params:
         server.insecure: true
   server:
     ingress:
         enabled: false
+    serviceAccount:
+      create: true
+      name: argocd-server  
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/argocd-role
   dex:
     enabled: false
   repoServer:
