@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:547886934166:certificate/4796129c-12c0-42bf-9a2b-2cdc57a51d33
+    alb.ingress.kubernetes.io/group.name: applications-alb
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/load-balancer-name: applications-alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+    alb.ingress.kubernetes.io/target-type: ip
+  name: grafana
+  namespace: monitoring
+spec:
+  ingressClassName: alb
+  rules:
+  - host: grafana.camila-devops.site
+    http:
+      paths:
+      - backend:
+          service:
+            name: ssl-redirect
+            port:
+              name: use-annotation
+        path: /
+        pathType: Prefix
+      - backend:
+          service:
+            name: prometheus-grafana
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
