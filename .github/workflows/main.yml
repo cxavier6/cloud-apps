@@ -53,7 +53,7 @@ jobs:
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
         kustomize edit set image $REGISTRY/$NODE_REPOSITORY=$REGISTRY/$NODE_REPOSITORY:$IMAGE_TAG
         git add ./kustomization.yaml
-        git commit -m "[Github Action] Updated Node App Image to $IMAGE_TAG"
+        git commit -m "[Github Actions] Updated Node App Image to $IMAGE_TAG"
         git push
 
   pythonApp:
@@ -93,7 +93,7 @@ jobs:
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
         kustomize edit set image $REGISTRY/$PYTHON_REPOSITORY=$REGISTRY/$PYTHON_REPOSITORY:$IMAGE_TAG
         git add ./kustomization.yaml
-        git commit -m "[Github Action] Updated Python App Image to $IMAGE_TAG"
+        git commit -m "[Github Actions] Updated Python App Image to $IMAGE_TAG"
         git push
 
 
