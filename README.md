@@ -128,6 +128,34 @@ NGINX is used as reverse proxy in the EKS cluster to distribute traffic for each
 
 ## Infrastructure Diagram
 
-![cloud-apps drawio (1)](https://github.com/user-attachments/assets/c1380c4b-d809-4806-bcc8-d102a21fecb0)
+![cloud-apps drawio (2)](https://github.com/user-attachments/assets/564c424c-8f0c-4138-99dd-a7120b0596b3)
 
 
+### Infrastructure Improvements
+
+**Repository Structure**
+- Split the infrastructure and apps/k8s-manifests into two private repositories.
+
+**Networking and Access**
+- Set up a VPC for VPN and vpc-peering between it and the vpc-apps.
+- Implement VPN for access to the EKS cluster and Terraform within the cluster.
+- Make the EKS cluster private with a security group allowing access only from the VPN CIDR.
+- If needed, create a new VPC with more available IPs or add an additional CIDR block.
+
+**CI/CD and Automation**
+- Configure GitHub Actions to run with a self-hosted runner because the cluster will be private or implement another CI tool like Argo Workflows.
+
+**DNS**
+- Add external-dns for automatic DNS management.
+
+**Autoscaling**
+- Add metrics-server for Horizontal Pod Autoscaling (HPA) based on metrics or use KEDA for autoscaling based on events.
+- Implement Karpenter for node autoscaling.
+
+**Load Balacing and Security**
+- Set up an internal ALB or NLB for Grafana/ArgoCD and an internet-facing ALB for the applications.
+- Implement a WAF (Web Application Firewall) for the application ALB.
+- Improve NGINX proxy security configurations.
+
+**Environment Management**
+- If additional environments are needed, refactor the Terraform with an "environments" folder and use Terraform workspaces.
