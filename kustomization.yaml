@@ -21,7 +21,7 @@ configMapGenerator:
 images:
 - name: 547886934166.dkr.ecr.us-east-1.amazonaws.com/app-node
   newName: 547886934166.dkr.ecr.us-east-1.amazonaws.com/app-node
-  newTag: v1.0
+  newTag: 53d8e4eb5794cae9e4c79100d0b3d70e7d5ba4e8
 - name: 547886934166.dkr.ecr.us-east-1.amazonaws.com/app-python
   newName: 547886934166.dkr.ecr.us-east-1.amazonaws.com/app-python
   newTag: v1.0
