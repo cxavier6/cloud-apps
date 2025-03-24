@@ -9,6 +9,13 @@
 ![Grafana](https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white)
 ![Prometheus](https://img.shields.io/badge/Prometheus-000000?style=for-the-badge&logo=prometheus&labelColor=000000)
 
+## Requirements
+
+- Terraform
+- AWS CLI
+- Docker
+- kubectl
+- kustomize
 
 ## Infrastructure Setup
 
@@ -122,4 +129,5 @@ NGINX is used as reverse proxy in the EKS cluster to distribute traffic for each
 ## Infrastructure Diagram
 
 ![cloud-apps drawio (1)](https://github.com/user-attachments/assets/c1380c4b-d809-4806-bcc8-d102a21fecb0)
+
 
