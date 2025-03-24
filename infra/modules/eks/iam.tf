@@ -26,7 +26,7 @@ resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
 resource "aws_eks_access_policy_association" "this" {
   cluster_name = var.eks_cluster.cluster_name
   policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-  principal_arn = "arn:aws:iam::547886934166:user/camila"
+  principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/camila"
 
   access_scope {
     type = "cluster"
