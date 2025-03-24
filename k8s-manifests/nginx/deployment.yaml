@@ -4,6 +4,7 @@ metadata:
   name: nginx-proxy
 spec:
   replicas: 1
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
       app: nginx-proxy
