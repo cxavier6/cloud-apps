@@ -31,7 +31,7 @@ resource "aws_eks_cluster" "this" {
 
 resource "aws_eks_access_entry" "this" {
   cluster_name      = aws_eks_cluster.this.name
-  principal_arn     = "arn:aws:iam::547886934166:user/camila"
+  principal_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/camila"
   type              = "STANDARD"
 }
 
