@@ -23,6 +23,7 @@
 To setup the infrastructure with Terraform run the following commands inside the `/infra` folder:
 
 ```bash
+terraform init
 terraform plan -out=tmp/infra
 terraform apply "tmp/infra
 ```
@@ -156,6 +157,7 @@ NGINX is used as reverse proxy in the EKS cluster to distribute traffic for each
 - Set up an internal ALB or NLB for Grafana/ArgoCD and an internet-facing ALB for the applications.
 - Implement a WAF (Web Application Firewall) for the application ALB.
 - Improve NGINX proxy security configurations.
+- Implement secrets for environment variables (e.g external-secrets)
 
 **Environment Management**
 - If additional environments are needed, refactor the Terraform with an "environments" folder and use Terraform workspaces.
